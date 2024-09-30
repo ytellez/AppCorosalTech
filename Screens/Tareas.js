@@ -5,10 +5,7 @@ import uuid from 'react-native-uuid';
 
 export default function Tareas() {
     const [tarea, setTarea]=useState('');
-    const [tareas, setTareas]=useState([
-      {id:2, tarea: 'Prueba', completada: false},
-      {id:3, tarea: 'Prueba', completada: false}
-    ]);
+    const [tareas, setTareas]=useState([]);
   
     const guardarTarea = () =>{
       if (!tarea) return
