@@ -118,7 +118,7 @@ export default function Producto() {
       )}
 
       {/* Botón para enviar el formulario */}
-      <View style={{ marginTop: 30 }}>
+      <View style={{ marginBottom: 15 }}>
         <Button title="Enviar" onPress={enviarDatos} />
       </View>
     </ScrollView>
@@ -133,7 +133,7 @@ const styles = StyleSheet.create({
   image: {
     width: 200,
     height: 200,
-    margin:10,
+    margin:5,
   },
   TextInput:{
     borderColor: 'gray', 
