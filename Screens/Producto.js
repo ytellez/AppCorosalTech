@@ -1,13 +1,17 @@
-import { View, Text, Button, StyleSheet, Image, ScrollView, TextInput } from 'react-native'
+import { View, Text, Button, StyleSheet, Image, ScrollView, TextInput, ActivityIndicator } from 'react-native'
 import React from 'react'
 import { useState } from 'react';
 import { collection, addDoc, getFirestore } from "firebase/firestore"; 
 import * as ImagePicker from 'expo-image-picker';
-import Conexion from '../database/Conexion.js'
+import {appFirebase} from '../database/Conexion.js';
+import {firebase} from '../database/Conexion.js';
+import uuid from 'react-native-uuid';
+
+
 
 export default function Producto() {
 
-    const db = getFirestore(Conexion)
+    const db = getFirestore(appFirebase)
     //conexion con la base de datos
 
     const [producto, setProductos] = useState({
@@ -16,28 +20,77 @@ export default function Producto() {
         caracteristicas:"",
         modelo:"",
         precio:0,
-        imageUri:null,
+        imageUrl:null,
       });
-     
-      const establecerEstado = (nombre, value) =>{
-        setProductos({...producto, [nombre]:value})
+
+      const establecerEstado=(nombre, valor)=>{
+        setProductos({...producto, [nombre]:valor})
+
       }
-
-    //Función que permite elegir una imagen de la galería
-    const pickImage = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
-      aspect: [3, 3],
-      quality: 1,
-    });
-
-    if (!result.canceled) {
-      establecerEstado("imageUri",result.assets[0].uri)
+ 
+      const [image, setImage] = useState(null);
+      const [uploading, setUploading] = useState(false);
+      const [url, setUrl] = useState(null);
+    
+     //Función que permite elegir una imagen de la galería
+     const pickImage = async () => {
+      let result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.All,
+        allowsEditing: true,
+        aspect: [3, 3],
+        quality: 1,
+      });
+    
+      if (!result.canceled) {
+        setImage(result.assets[0].uri);
+      };
+      console.log(image);
+     // uploadImage();
+     // establecerEstado("imageUrl",url);
+    };
+    
+    const uploadImage = async () => {
+      const blob = await new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.onload = function() {
+          resolve(xhr.response);
+        };
+        xhr.onerror = function() {
+          reject(new TypeError('Network request failed'));
+        };
+        xhr.responseType = 'blob';
+        xhr.open('GET', image, true);
+        xhr.send(null);
+      })
+      const uniqueId = uuid.v4(); 
+      const ref = firebase.storage().ref().child(`Pictures/Image${uniqueId}`)
+      const snapshot = ref.put(blob)
+      snapshot.on(firebase.storage.TaskEvent.STATE_CHANGED,
+        ()=>{
+          setUploading(true)
+        },
+        (error) => {
+          setUploading(false)
+          console.log(error)
+          blob.close()
+          return 
+        },
+        () => {
+          snapshot.snapshot.ref.getDownloadURL().then((url) => {
+            setUploading(false)
+            console.log("Download URL: ", url)
+            setImage(url)
+            establecerEstado("imageUrl",url)
+            blob.close()
+            console.log(url)
+            return url  
+          })
+        }
+        )
     }
-  };
 
-  enviarDatos=()=>{
+
+ enviarDatos=()=>{
     if (!producto) return //validar
     guardarProducto(producto);
     setProductos({
@@ -46,7 +99,7 @@ export default function Producto() {
         caracteristicas:"",
         modelo:"",
         precio:0,
-        imageUri:null,
+        imageUrl:null,
     });
   }
 
@@ -113,9 +166,10 @@ export default function Producto() {
    
       {/* Botón para seleccionar imagen */}
       <Button title="Seleccionar Imagen" onPress={pickImage} />
-      {producto.imageUri && (
-        <Image source={{ uri: producto.imageUri }} style={styles.image} />
+      {image && (
+        <Image source={{ uri: image }} style={styles.image} />
       )}
+       {!uploading ? <Button title='Upload Image' onPress={uploadImage} />: <ActivityIndicator size={'small'} color='black' />}
 
       {/* Botón para enviar el formulario */}
       <View style={{ marginBottom: 15 }}>
