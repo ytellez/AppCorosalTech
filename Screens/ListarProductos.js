@@ -1,15 +1,12 @@
 import { View, Text, ScrollView, StyleSheet, TextInput } from 'react-native'
 import { Card, Button, Icon} from '@rneui/themed';
 
-
 import React, { useEffect } from 'react'
 
 import { useState } from 'react';
-import { collection, addDoc,getDocs, getFirestore } from "firebase/firestore"; 
+import { collection, addDoc, getDocs, getFirestore } from "firebase/firestore"; 
 import {appFirebase} from '../database/Conexion.js';
-
-
-
+import { list } from '@react-native-firebase/storage';
 
 export default function Users(props) {
 
@@ -72,45 +69,45 @@ const searchFilterFunction = (text) => {
        
     <ScrollView style={styles.container}>
       <View style={styles.container}>
-      <TextInput
-      style={styles.searchBar}
-      inputContainerStyle={{backgroundColor: 'white'}}
-      placeholder="Buscar.."
-      value={filteredData} 
-      onChangeText={text=>searchFilterFunction(text)}
-     /> 
+        <TextInput
+          style={styles.searchBar}
+          inputContainerStyle={{backgroundColor: 'white'}}
+          placeholder="Buscar.."
+          value={filteredData} 
+          onChangeText={text=>searchFilterFunction(text)}
+       /> 
      </View>
      <View>{/*Mostrar productos de la BD  */}
         {
            filteredData.map((List)=>(
-            <View>
+            <View style={styles.contenedorCard} key={List.id}>
               <Card>
                 <Card.Title style={styles.TextTituloCard}>{List.descripcion}</Card.Title>
-                 <Card.Divider />
-                 <Card.Image
-                    style={{ padding: 0 }}
-                    source={{
-                      uri:List. imageUrl}}
-                  />
-                  <Text style={styles.textoLista}>Detalle: 
+                <Card.Divider />
+                <Card.Image
+                  style={{ padding: 0, height:200, width:200, alignSelf:'center'  }}
+                  source={{
+                  uri:List. imageUrl}}
+                />
+                <Text style={styles.textoLista}>Detalle: 
                   {List.caracteristicas}
-                  </Text>
-                  <Text style={styles.textoLista}> Marca: 
+                </Text>
+                <Text style={styles.textoLista}> Marca: 
                   {List.marca}
-                  </Text>
-                  <Text style={styles.textoLista}> Modelo: 
+                </Text>
+                <Text style={styles.textoLista}> Modelo: 
                   {List.modelo}
-                  </Text>
-                  <Text style={styles.textoLista}> Precio: 
+                </Text>
+                <Text style={styles.textoLista}> Precio: 
                   {List.precio}
-                  </Text>
-                  <Button style={styles.botonStyle}
-                    icon={<Icon
-                        name="code"              
-                      />
-                    }
-                    title="Preguntar al vendedor"
+                </Text>
+                <Button style={styles.botonStyle}
+                  icon={<Icon
+                    name="code"              
                   />
+                  }
+                  title="Preguntar al vendedor"
+                />
               </Card>
            </View>
           ))
@@ -127,7 +124,6 @@ const styles = StyleSheet.create({
   container: {
     padding:10,
   },
-
   image: {
     width: 200,
     height: 200,
@@ -154,9 +150,9 @@ const styles = StyleSheet.create({
   },
   botonStyle:{
     borderRadius: 0,
-              marginLeft: 0,
-              marginRight: 0,
-              marginBottom: 0,
+    marginLeft: 0,
+    marginRight: 0,
+    marginBottom: 0,
   },
   iconStyle:{
     marginRight: 10,

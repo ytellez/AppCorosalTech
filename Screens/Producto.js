@@ -1,4 +1,5 @@
-import { View, Text, Button, StyleSheet, Image, ScrollView, TextInput, ActivityIndicator } from 'react-native'
+import { View, Text, Button, StyleSheet, Image, 
+  ScrollView, TextInput, ActivityIndicator, Alert } from 'react-native'
 import React from 'react'
 import { useState } from 'react';
 import { collection, addDoc, getFirestore } from "firebase/firestore"; 
@@ -27,10 +28,8 @@ export default function Producto() {
         setProductos({...producto, [nombre]:valor})
 
       }
- 
       const [image, setImage] = useState(null);
       const [uploading, setUploading] = useState(false);
-      const [url, setUrl] = useState(null);
     
      //Función que permite elegir una imagen de la galería
      const pickImage = async () => {
@@ -45,11 +44,14 @@ export default function Producto() {
         setImage(result.assets[0].uri);
       };
       console.log(image);
-     // uploadImage();
      // establecerEstado("imageUrl",url);
     };
     
     const uploadImage = async () => {
+      if (!producto.caracteristicas||!producto.marca || !producto.descripcion 
+        ||!producto.modelo || !producto.precio || image===null){
+        Alert.alert("Alerta","Faltan datos por rellenar");
+      } else{
       const blob = await new Promise((resolve, reject) => {
         const xhr = new XMLHttpRequest();
         xhr.onload = function() {
@@ -82,25 +84,27 @@ export default function Producto() {
             setImage(url)
             establecerEstado("imageUrl",url)
             blob.close()
+            validarDatos();
             console.log(url)
             return url  
           })
         }
         )
+      }
     }
 
-
- enviarDatos=()=>{
-    if (!producto) return //validar
-    guardarProducto(producto);
+validarDatos=()=>{
+  guardarProducto(producto);
     setProductos({
-        descripcion:"",
-        marca:"",
-        caracteristicas:"",
-        modelo:"",
-        precio:0,
-        imageUrl:null,
+      descripcion:"",
+      marca:"",
+      caracteristicas:"",
+      modelo:"",
+      precio:0,
+      imageUrl:null,
     });
+    setImage(null);
+    Alert.alert('Alert', 'Datos guardados correctamente');
   }
 
   const guardarProducto = async(producto) => {
@@ -169,11 +173,12 @@ export default function Producto() {
       {image && (
         <Image source={{ uri: image }} style={styles.image} />
       )}
-       {!uploading ? <Button title='Upload Image' onPress={uploadImage} />: <ActivityIndicator size={'small'} color='black' />}
+      {/* {!uploading ? <Button title='Upload Image' onPress={uploadImage} />: <ActivityIndicator size={'small'} color='black' />}*/}
 
       {/* Botón para enviar el formulario */}
-      <View style={{ marginBottom: 15 }}>
-        <Button title="Enviar" onPress={enviarDatos} />
+      <View style={{ marginBottom: 15, paddingVertical:7 }}>
+       {/* <Button title="Enviar" onPress={uploadImage} />*/}
+        {!uploading ? <Button title="Enviar" onPress={uploadImage} />: <ActivityIndicator size={'small'} color='black' />}
       </View>
     </ScrollView>
   );

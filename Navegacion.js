@@ -6,13 +6,15 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { createStackNavigator} from '@react-navigation/stack';
 import { createDrawerNavigator, DrawerItemList } from '@react-navigation/drawer';
+
 import AntDesign from '@expo/vector-icons/AntDesign';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import Fontisto from '@expo/vector-icons/Fontisto';
+import Ionicons from '@expo/vector-icons/Ionicons';
 
 import Settings from './Screens/Settings';
 import Home from './Screens/Home';
-import Users from './Screens/Users';
+import Users from './Screens/ListarProductos';
 import DetailHome from './Screens/DetailHome';
 import AnotherDetailHome from './Screens/AnotherDatailsHome';
 import Tareas from './Screens/Tareas';
@@ -75,17 +77,18 @@ function MyTabs(){
         />
         <Tab.Screen name='Users' component={Users} 
          options={{
-          tabBarLabel:'Users',
+          tabBarLabel:'Listar productos',
           tabBarIcon: ({color, size})=> (
-            <AntDesign name="user" size={30} color={color} />
-          )
+            <Fontisto name="shopping-basket-add" size={24} color={color} />
+          ),
+          headerShown:false,
         }}
       />
         <Tab.Screen name='Producto' component={Producto} 
          options={{
             tabBarLabel:'Producto',
             tabBarIcon: ({color, size})=> (
-              <Fontisto name="shopping-basket-add" size={24} color={color} />
+              <Ionicons name="add-circle" size={24} color="black" />
             ),
             headerShown:false,
           }}
