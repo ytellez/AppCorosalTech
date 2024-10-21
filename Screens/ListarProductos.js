@@ -8,7 +8,7 @@ import { collection, addDoc, getDocs, getFirestore } from "firebase/firestore";
 import {appFirebase} from '../database/Conexion.js';
 import { list } from '@react-native-firebase/storage';
 
-export default function Users(props) {
+export default function ListarProductos(props) {
 
   const db = getFirestore(appFirebase)
     //conexion con la base de datos
@@ -122,7 +122,7 @@ const searchFilterFunction = (text) => {
 
 const styles = StyleSheet.create({
   container: {
-    padding:10,
+    padding:20,
   },
   image: {
     width: 200,

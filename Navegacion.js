@@ -19,7 +19,36 @@ import DetailHome from './Screens/DetailHome';
 import AnotherDetailHome from './Screens/AnotherDatailsHome';
 import Tareas from './Screens/Tareas';
 import Producto from './Screens/Producto';
+import LoginScreen from './LoginScreen'
+import ListarProductos from './Screens/ListarProductos';
 
+const LogintoNavegation = createStackNavigator();
+function StackLogin (){
+  return(
+    <LogintoNavegation.Navigator
+      initialRouteName='LoginScreen'>
+        <LogintoNavegation.Screen
+          name="LoginScreen"
+          component={LoginScreen}
+          >
+        </LogintoNavegation.Screen>
+        <LogintoNavegation.Screen
+          name="DrawerNavigation"
+          component={DrawerNavigation}
+          options={{
+            headerShown:false,
+          }}>
+        </LogintoNavegation.Screen>
+        <LogintoNavegation.Screen
+          name="MyTabs2"
+          component={MyTabs2}
+          options={{
+            headerShown:false,
+          }}>
+        </LogintoNavegation.Screen>
+     </LogintoNavegation.Navigator>
+  )   
+};
 
 const DetailsHomeNavigator = createStackNavigator();
 
@@ -45,14 +74,45 @@ function StackDetailHome(){
     </DetailsHomeNavigator.Navigator>
   )
 }
-
-
+const Tab2 = createBottomTabNavigator();
+function MyTabs2(){
+  return(
+    <Tab2.Navigator
+      initialRouteName='Users'
+      screenOptions={{
+        tabBarActiveTintColor: 'purple',
+        headerShown:false,
+      }}
+    >
+        <Tab2.Screen name='Home' component={Home} 
+          options={{
+            tabBarLabel:'Home',
+            tabBarIcon: ({color, size})=> (
+              <AntDesign name="home" size={30} color={color} />
+            ),
+            headerShown:false,
+          }}
+        />
+ 
+        <Tab2.Screen name='Users' component={Users} 
+         options={{
+          tabBarLabel:'Listar productos',
+          tabBarIcon: ({color, size})=> (
+            <Fontisto name="shopping-basket-add" size={24} color={color} />
+          ),
+          headerShown:false,
+        }}
+      />
+       
+    </Tab2.Navigator>
+  )
+};
 const Tab = createBottomTabNavigator();
 
 function MyTabs(){
   return(
     <Tab.Navigator
-      initialRouteName='Home'
+      initialRouteName='Producto'
       screenOptions={{
         tabBarActiveTintColor: 'purple',
       }}
@@ -75,7 +135,7 @@ function MyTabs(){
             headerShown:false,
           }}
         />
-        <Tab.Screen name='Users' component={Users} 
+        <Tab.Screen name='ListarProductos' component={ListarProductos} 
          options={{
           tabBarLabel:'Listar productos',
           tabBarIcon: ({color, size})=> (
@@ -176,7 +236,8 @@ function DrawerNavigation({nombre, foto}) {
 export default function Navegacion({nombre, foto}) {
   return (
    <NavigationContainer>
-     <DrawerNavigation nombre={nombre} foto={foto}/>
+  {/* <DrawerNavigation nombre={nombre} foto={foto}/>*/}
+    <StackLogin nombre={nombre} foto={foto}></StackLogin>
   </NavigationContainer>
   )
 }
